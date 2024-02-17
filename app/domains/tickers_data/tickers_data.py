@@ -2,7 +2,7 @@ import yfinance as yf
 from decimal import Decimal
 
 from app.config.settings import Settings
-from app.domains.graphs.close_plot import close_plot
+from app.domains.graphs.max_min_plot import max_min_plot
 from app.domains.graphs.candle_plot import candle_plot
 
 
@@ -40,12 +40,12 @@ class TickersData:
         dataframe = dataframe.sort_values("Datetime", ascending=False)
         return dataframe
 
-    def plot_close(self, time):
+    def plot_max_min(self, time):
         dataframe = self.get_general_data(time)[1].reset_index()[
             ["Datetime", "Open", "High", "Low", "Close", "Volume"]
         ]
 
-        fig_close = close_plot(
+        fig_max_min = max_min_plot(
             dataframe["Low"],
             dataframe["High"],
             dataframe["Open"].mean(),
@@ -53,7 +53,7 @@ class TickersData:
             self.ticker_symbol,
         )
 
-        return fig_close
+        return fig_max_min
 
     def plot_candle(self, time):
         dataframe = self.get_general_data(time)[1].reset_index()[

@@ -1,6 +1,10 @@
 import streamlit as st
 from app.domains.tickers_data.tickers_data import TickersData
 from app.domains.tickers_data.ticker_list import ticker_list
+from app.domains.database.database_functions import Database
+
+database = Database("datainvest_database.db")
+database.create_table()
 
 st.set_page_config(layout="wide")
 
@@ -72,7 +76,13 @@ charts, tables, compare, observations = st.tabs(
 with charts:
     col16, col17 = st.columns(2)
     col16.plotly_chart(ticker_data.plot_candle(time))
-    col17.plotly_chart(ticker_data.plot_close(time))
+    col17.plotly_chart(ticker_data.plot_max_min(time))
+
+    comment = st.text_area("Adicione um comentário:", key="comment_individual")
+    if st.button("Salvar", key="save_individual"):
+        database.insert_comment(time, "individual", selected_ticker, comment)
+        st.success("Salvo com sucesso!")
+        comment = ""
 
 with tables:
     st.title(f"Tabela - {selected_ticker}")
@@ -86,8 +96,23 @@ with compare:
     col26, col27 = st.columns(2)
     col16.plotly_chart(ticker_data.plot_candle(time))
     col17.plotly_chart(ticker_data_second.plot_candle(time))
-    col16.plotly_chart(ticker_data.plot_close(time))
-    col17.plotly_chart(ticker_data_second.plot_close(time))
+    col16.plotly_chart(ticker_data.plot_max_min(time))
+    col17.plotly_chart(ticker_data_second.plot_max_min(time))
+
+    comment = st.text_area("Adicione um comentário:", key="comment_compare")
+    if st.button("Salvar", key="save_compare"):
+        database.insert_comment(
+            time,
+            "comparação",
+            f"{selected_ticker} - {selected_ticker_second}",
+            comment,
+        )
+        st.success("Salvo com sucesso!")
+        comment = ""
 
 with observations:
     st.title("Observações")
+    ticker_comments = database.get_comments_as_dataframe(selected_ticker)
+    ticker_comments = ticker_comments.drop("id", axis=1)
+    ticker_comments.columns = ["Data", "Período", "Área", "Ação", "Comentário"]
+    st.write(ticker_comments)
