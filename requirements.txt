@@ -1,6 +1,6 @@
 pandas
 plotly
 streamlit
-yfinance
+yfinance==0.2.36
 pydantic_settings
 decimal
