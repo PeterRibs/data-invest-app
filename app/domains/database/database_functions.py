@@ -37,15 +37,6 @@ class Database:
         cur.execute(sql, (period, area_commented, tricker_symbol, comment))
         self.conn.commit()
 
-    def get_comments(self, tricker_symbol):
-        cur = self.conn.cursor()
-        cur.execute(
-            "SELECT * FROM tricker_comments WHERE tricker_symbol LIKE ?",
-            ("%" + tricker_symbol + "%",),
-        )
-        rows = cur.fetchall()
-        return rows
-
     def get_comments_as_dataframe(self, tricker_symbol):
         cur = self.conn.cursor()
         cur.execute(
