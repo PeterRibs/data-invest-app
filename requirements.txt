@@ -1,0 +1,6 @@
+pandas
+plotly
+streamlit
+yfinance
+pydantic_settings
+decimal
