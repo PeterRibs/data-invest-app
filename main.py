@@ -25,7 +25,6 @@ col01, col02, col03, col04, col05 = st.columns(5)
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
 
-
 ticker_dataframe.columns = [
     "Data - Hora",
     "Abertura",
