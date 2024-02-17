@@ -1,10 +1,10 @@
 import streamlit as st
-from domains.tickers_data.tickers_data import TickersData
-from domains.tickers_data.ticker_list import ticker_list
+from app.domains.tickers_data.tickers_data import TickersData
+from app.domains.tickers_data.ticker_list import ticker_list
 
 st.set_page_config(layout="wide")
 
-st.sidebar.image("assets/datainvest.png")
+st.sidebar.image("app/assets/datainvest.png")
 
 selected_ticker = st.sidebar.selectbox("Ação:", sorted(ticker_list))
 

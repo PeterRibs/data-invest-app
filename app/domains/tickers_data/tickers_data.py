@@ -1,9 +1,9 @@
 import yfinance as yf
 from decimal import Decimal
 
-from config.settings import Settings
-from domains.graphs.close_plot import close_plot
-from domains.graphs.candle_plot import candle_plot
+from app.config.settings import Settings
+from app.domains.graphs.close_plot import close_plot
+from app.domains.graphs.candle_plot import candle_plot
 
 
 class TickersData:
