@@ -16,58 +16,38 @@ time_list = ["Diário", "Semanal", "Mensal"]
 
 time = st.sidebar.selectbox("Período analisado:", time_list)
 
+currency_list = ["USD", "BRL"]
+
+currency = st.sidebar.selectbox("Moeda escolhda:", currency_list)
+
 col01, col02, col03, col04, col05 = st.columns(5)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
-ticker_dataframe = ticker_data.get_download(time)
+ticker_dataframe = ticker_data.get_download(time, currency)
+
 
 ticker_dataframe.columns = [
     "Data - Hora",
     "Abertura",
     "Máximo",
-    "MÍmino",
+    "Mímino",
     "Fechamento",
     "Qtd trades",
 ]
 
-ticker_general_data = ticker_data.get_general_data(time)[0]
 
-dolar = 4.97
-open_value_brl = round((float(ticker_general_data.open) * dolar), 2)
-higher_value_brl = round((float(ticker_general_data.higher) * dolar), 2)
-lower_value_brl = round((float(ticker_general_data.lower) * dolar), 2)
-closed_value_brl = round((float(ticker_general_data.closed) * dolar), 2)
+ticker_general_data = ticker_data.get_general_data(time, currency)[0]
 
-col01.write(
-    f"""\n
-    Abertura: \n
-    {ticker_general_data.open} USD \n
-    {open_value_brl} BRL"""
-)
-col02.write(
-    f"""\n
-    Fechamento: \n
-    {ticker_general_data.closed} USD \n
-    {closed_value_brl} BRL"""
-)
-col03.write(
-    f"""\n
-    Máximo: \n
-    {ticker_general_data.higher} USD \n
-    {higher_value_brl} BRL"""
-)
-col04.write(
-    f"""\n
-    Mínimo: \n
-    {ticker_general_data.lower} USD \n
-    {lower_value_brl} BRL"""
+ticker_data_open_mean = round(
+    ticker_data.get_general_data(time, currency)[1]["Open"].mean(), 2
 )
 
-col05.write(
-    f"""\n
-    Número de negociações: \n
-    {ticker_general_data.volume}"""
-)
+col01.write(f"""Abertura: {ticker_general_data.open} {currency}""")
+col01.write(f"""Fechamento: {ticker_general_data.closed} {currency}""")
+col02.write(f"""Máximo: {ticker_general_data.higher} {currency}""")
+col02.write(f"""Mínimo: {ticker_general_data.lower} {currency}""")
+col03.write(f"""Média de abertura: {ticker_data_open_mean} {currency}""")
+col05.write(f"""Número de negociações: {ticker_general_data.volume}""")
 
 charts, tables, compare, observations = st.tabs(
     ["Gráficos", "Tabela", "Comparativo", "Observações"]
@@ -75,8 +55,8 @@ charts, tables, compare, observations = st.tabs(
 
 with charts:
     col16, col17 = st.columns(2)
-    col16.plotly_chart(ticker_data.plot_candle(time))
-    col17.plotly_chart(ticker_data.plot_max_min(time))
+    col16.plotly_chart(ticker_data.plot_candle(time, currency))
+    col17.plotly_chart(ticker_data.plot_max_min(time, currency))
 
     comment = st.text_area("Adicione um comentário:", key="comment_individual")
     if st.button("Salvar", key="save_individual"):
@@ -94,10 +74,10 @@ with compare:
 
     col16, col17 = st.columns(2)
     col26, col27 = st.columns(2)
-    col16.plotly_chart(ticker_data.plot_candle(time))
-    col17.plotly_chart(ticker_data_second.plot_candle(time))
-    col16.plotly_chart(ticker_data.plot_max_min(time))
-    col17.plotly_chart(ticker_data_second.plot_max_min(time))
+    col16.plotly_chart(ticker_data.plot_candle(time, currency))
+    col17.plotly_chart(ticker_data_second.plot_candle(time, currency))
+    col16.plotly_chart(ticker_data.plot_max_min(time, currency))
+    col17.plotly_chart(ticker_data_second.plot_max_min(time, currency))
 
     comment = st.text_area("Adicione um comentário:", key="comment_compare")
     if st.button("Salvar", key="save_compare"):
