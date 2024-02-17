@@ -2,7 +2,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-def close_plot(
+def max_min_plot(
     axis_y,
     axis_y_2,
     axis_y_3,
