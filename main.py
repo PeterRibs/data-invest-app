@@ -64,7 +64,15 @@ col14.metric(
         2,
     ),
 )
-col15.write(f"""Número de negociações: {ticker_general_data.volume}""")
+col15.metric(
+    label="Negociações:",
+    value=round(int(tricker_get_general_data[0].volume), 2),
+    delta=round(
+        int(tricker_get_general_data[0].volume)
+        - int(tricker_get_general_data[0].penultimate_data_volume),
+        2,
+    ),
+)
 
 # Tabs
 charts, tables, notes, compare = st.tabs(
