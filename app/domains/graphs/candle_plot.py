@@ -7,7 +7,7 @@ def candle_plot(
     currency,
     time,
     height_size=400,
-    width_size=550,
+    width_size=560,
 ):
     candle = go.Figure(
         data=[
@@ -22,7 +22,7 @@ def candle_plot(
     )
 
     candle.update_layout(
-        title=f"Variação da ação: {ticker_symbol}",
+        title=f"{ticker_symbol}",
         xaxis_title="Data - Hora",
         yaxis_title=f"Valor ({currency})",
         xaxis_rangeslider_visible=False,
