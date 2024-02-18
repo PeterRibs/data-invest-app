@@ -3,7 +3,6 @@ ticker_list = [
     "MSFT",
     "AMZN",
     "GOOGL",
-    "FB",
     "TSLA",
     "JPM",
     "V",

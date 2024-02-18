@@ -11,12 +11,12 @@ def max_min_plot(
     ticker_symbol,
     currency,
     height_size=400,
-    width_size=550,
+    width_size=560,
 ):
     line_plot = px.line(
         x=axis_x if time == "Diário" else None,
         y=axis_y,
-        title=f"{ticker_symbol}  - {time}",
+        title=f"{ticker_symbol}",
         markers=True,
         height=height_size,
         width=width_size,
