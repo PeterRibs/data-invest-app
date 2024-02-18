@@ -3,18 +3,20 @@ import plotly.graph_objects as go
 
 
 def max_min_plot(
+    axis_x,
     axis_y,
     axis_y_2,
     axis_y_3,
-    time_title,
+    time,
     ticker_symbol,
     currency,
     height_size=400,
     width_size=550,
 ):
     line_plot = px.line(
+        x=axis_x if time == "Diário" else None,
         y=axis_y,
-        title=f"{ticker_symbol}  - {time_title}",
+        title=f"{ticker_symbol}  - {time}",
         markers=True,
         height=height_size,
         width=width_size,
@@ -29,7 +31,12 @@ def max_min_plot(
 
     if axis_y_2 is not None:
         line_plot.add_trace(
-            go.Scatter(y=axis_y_2, name="Máximo", line=dict(color="blue"))
+            go.Scatter(
+                x=axis_x if time == "Diário" else None,
+                y=axis_y_2,
+                name="Máximo",
+                line=dict(color="blue"),
+            )
         )
 
     if axis_y_3 is not None:

@@ -18,9 +18,9 @@ time = st.sidebar.selectbox("Período analisado:", time_list)
 
 currency_list = ["USD", "BRL"]
 
-currency = st.sidebar.selectbox("Moeda escolhda:", currency_list)
+currency = st.sidebar.selectbox("Moeda:", currency_list)
 
-col01, col02, col03, col04, col05 = st.columns(5)
+col01, col02, col03, col05 = st.columns(4)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
@@ -40,12 +40,30 @@ ticker_general_data = ticker_data.get_general_data(time, currency)[0]
 ticker_data_open_mean = round(
     ticker_data.get_general_data(time, currency)[1]["Open"].mean(), 2
 )
+ticker_data_close_mean = round(
+    ticker_data.get_general_data(time, currency)[1]["Close"].mean(), 2
+)
 
 col01.write(f"""Abertura: {ticker_general_data.open} {currency}""")
-col01.write(f"""Fechamento: {ticker_general_data.closed} {currency}""")
+col01.metric(
+    label="Fechamento:",
+    value=float(ticker_general_data.closed),
+    delta=round(float(ticker_general_data.closed) - float(ticker_general_data.open), 2),
+)
 col02.write(f"""Máximo: {ticker_general_data.higher} {currency}""")
-col02.write(f"""Mínimo: {ticker_general_data.lower} {currency}""")
+col02.metric(
+    label="Mínimo:",
+    value=float(ticker_general_data.lower),
+    delta=round(
+        float(ticker_general_data.lower) - float(ticker_general_data.higher), 2
+    ),
+)
 col03.write(f"""Média de abertura: {ticker_data_open_mean} {currency}""")
+col03.metric(
+    label="Média de fechamento:",
+    value=float(ticker_data_close_mean),
+    delta=round(float(ticker_data_close_mean) - float(ticker_data_open_mean), 2),
+)
 col05.write(f"""Número de negociações: {ticker_general_data.volume}""")
 
 charts, tables, compare, observations = st.tabs(
