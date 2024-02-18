@@ -1,4 +1,5 @@
 import yfinance as yf
+from pandas import Series
 
 from app.config.settings import Settings
 from app.domains.graphs.max_min_plot import max_min_plot
@@ -25,13 +26,13 @@ class TickersData:
 
     def get_dividends_data(self, currency):
         ticker = self._get_ticker()
-        df_dividends = ticker.dividends.sort_index(ascending=True).values
+        df_dividends = ticker.dividends.sort_index(ascending=True)
 
         if currency == "BRL":
             df_dividends = df_dividends * dolar
 
         if len(df_dividends) == 0:
-            df_dividends = [0.0] * 10
+            df_dividends = Series([0.0] * 10)
 
         return df_dividends[-2:], df_dividends[-10:]
 
@@ -91,7 +92,8 @@ class TickersData:
     def plot_dividends(self, currency):
         _, dataframe = self.get_dividends_data(currency)
         return dividend_plot(
-            dataframe,
+            dataframe.index,
+            dataframe.values,
             self.ticker_symbol,
             currency,
             height_size=400,
