@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 
 # Header
 col00, col01, col02, col03, col04 = st.columns(5)
-col10, col11, col12, col13, col14 = st.columns(5)
+col10, col11, col12, col13, col14, col15 = st.columns(6)
 
 col00.image("app/assets/datainvest.png", width=200)
 
@@ -24,14 +24,13 @@ currency = col03.selectbox("Moeda:", currency_list)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
-ticker_general_data = ticker_data.get_general_data(time, currency)[0]
 
-ticker_data_open_mean = round(
-    ticker_data.get_general_data(time, currency)[1]["Open"].mean(), 2
-)
-ticker_data_close_mean = round(
-    ticker_data.get_general_data(time, currency)[1]["Close"].mean(), 2
-)
+tricker_get_general_data = ticker_data.get_general_data(time, currency)
+ticker_general_data = tricker_get_general_data[0]
+ticker_data_open_mean = round(tricker_get_general_data[1]["Open"].mean(), 2)
+ticker_data_close_mean = round(tricker_get_general_data[1]["Close"].mean(), 2)
+ticker_data_dividend = ticker_data.get_dividends_data(currency)
+
 col10.title(
     f"""{selected_ticker} 
 {currency} - {time}"""
@@ -56,7 +55,16 @@ col13.metric(
     value=float(ticker_data_close_mean),
     delta=round(float(ticker_data_close_mean) - float(ticker_data_open_mean), 2),
 )
-col14.write(f"""Número de negociações: {ticker_general_data.volume}""")
+col14.write(f"""Dividendo anterior: {round(float(ticker_data_dividend[0][-2]),2)}""")
+col14.metric(
+    label="Dividendo:",
+    value=round(float(ticker_data_dividend[0][-1]), 2),
+    delta=round(
+        float(ticker_data_dividend[0][-1]) - float(ticker_data_dividend[0][-2]),
+        2,
+    ),
+)
+col15.write(f"""Número de negociações: {ticker_general_data.volume}""")
 
 # Tabs
 charts, tables, notes, compare = st.tabs(
@@ -95,6 +103,7 @@ with compare:
     col20, col21, col22, col23, col24 = st.columns(5)
     col30, col31 = st.columns(2)
     col40, col41 = st.columns(2)
+    col50, col51 = st.columns(2)
 
     selected_ticker_second = col23.selectbox("Segunda Ação:", ticker_list)
     ticker_data_second = TickersData(ticker_symbol=selected_ticker_second)
@@ -103,8 +112,10 @@ with compare:
     col31.plotly_chart(ticker_data_second.plot_candle(time, currency))
     col40.plotly_chart(ticker_data.plot_max_min(time, currency))
     col41.plotly_chart(ticker_data_second.plot_max_min(time, currency))
+    col50.plotly_chart(ticker_data.plot_dividends(currency))
+    col51.plotly_chart(ticker_data_second.plot_dividends(currency))
 
-    note = st.text_area("Adicione um anotação:", key="note_compare")
+    note = st.text_area("Adicione uma anotação:", key="note_compare")
     if st.button("Salvar", key="save_compare"):
         database.insert_note(
             time,
