@@ -2,6 +2,7 @@ import plotly.express as px
 
 
 def dividend_plot(
+    axis_x,
     axis_y,
     ticker_symbol,
     currency,
@@ -9,6 +10,7 @@ def dividend_plot(
     width_size=560,
 ):
     line_plot = px.line(
+        x=axis_x,
         y=axis_y,
         title=f"Últimos dividendos de {ticker_symbol}",
         markers=True,
