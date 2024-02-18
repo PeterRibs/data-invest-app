@@ -8,19 +8,20 @@ database.create_table()
 
 st.set_page_config(layout="wide")
 
-st.sidebar.image("app/assets/datainvest.png")
+col000, col001, col002, col003, col004 = st.columns(5)
+col00, col01, col02, col03, col05 = st.columns(5)
 
-selected_ticker = st.sidebar.selectbox("Ação:", sorted(ticker_list))
+col000.image("app/assets/datainvest.png", width=200)
+
+selected_ticker = col001.selectbox("Ação:", sorted(ticker_list))
 
 time_list = ["Diário", "Semanal", "Mensal"]
 
-time = st.sidebar.selectbox("Período analisado:", time_list)
+time = col002.selectbox("Período analisado:", time_list)
 
 currency_list = ["USD", "BRL"]
 
-currency = st.sidebar.selectbox("Moeda:", currency_list)
-
-col00, col01, col02, col03, col05 = st.columns(5)
+currency = col003.selectbox("Moeda:", currency_list)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
@@ -44,13 +45,9 @@ ticker_data_close_mean = round(
     ticker_data.get_general_data(time, currency)[1]["Close"].mean(), 2
 )
 col00.title(
-    f"""{selected_ticker}
-        {currency} - {time}"""
+    f"""{selected_ticker} 
+{currency} - {time}"""
 )
-# col00.write(
-#     f"Abertura: <span style='font-size:20px'>{selected_ticker} - {currency} - {time}</span>",
-#     unsafe_allow_html=True,
-# )
 col01.write(f"""Abertura: {ticker_general_data.open}""")
 col01.metric(
     label="Fechamento:",
@@ -92,7 +89,11 @@ with tables:
     st.write(ticker_dataframe)
 
 with compare:
-    selected_ticker_second = st.selectbox("Segunda Ação:", ticker_list)
+
+    col_compare_0, col_compare_1, col_compare_2, col_compare_3, col_compare_4 = (
+        st.columns(5)
+    )
+    selected_ticker_second = col_compare_3.selectbox("Segunda Ação:", ticker_list)
     ticker_data_second = TickersData(ticker_symbol=selected_ticker_second)
 
     col16, col17 = st.columns(2)

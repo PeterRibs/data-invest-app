@@ -10,16 +10,12 @@ def max_min_plot(
     time,
     ticker_symbol,
     currency,
-    height_size=400,
-    width_size=560,
 ):
     line_plot = px.line(
         x=axis_x if time == "Diário" else None,
         y=axis_y,
         title=f"{ticker_symbol}",
         markers=True,
-        height=height_size,
-        width=width_size,
     )
     line_plot.update_traces(
         line_color="#7092BE", line_width=3.6, name="Mínimo", showlegend=True

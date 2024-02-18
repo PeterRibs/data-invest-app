@@ -6,8 +6,6 @@ def candle_plot(
     ticker_symbol,
     currency,
     time,
-    height_size=400,
-    width_size=560,
 ):
     candle = go.Figure(
         data=[
@@ -26,7 +24,5 @@ def candle_plot(
         xaxis_title="Data - Hora",
         yaxis_title=f"Valor ({currency})",
         xaxis_rangeslider_visible=False,
-        height=height_size,
-        width=width_size,
     )
     return candle
