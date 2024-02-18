@@ -1,5 +1,6 @@
 import yfinance as yf
-from decimal import Decimal
+import pandas as pd
+from datetime import datetime, timezone
 from app.config.settings import Settings
 from app.domains.graphs.max_min_plot import max_min_plot
 from app.domains.graphs.candle_plot import candle_plot
@@ -13,8 +14,6 @@ class TickersData:
 
     def _fetch_history(self, period, interval):
         ticker = yf.Ticker(self.ticker_symbol)
-        # print(ticker.earnings_dates)
-        # print(ticker.news)
         return ticker.history(period=period, interval=interval)
 
     def _convert_to_currency(self, dataframe, currency):
@@ -23,7 +22,7 @@ class TickersData:
 
     def get_general_data(self, time, currency):
         period_map = {"Diário": "1d", "Semanal": "5d", "Mensal": "30d"}
-        interval_map = {"Diário": "15m", "Semanal": "60m", "Mensal": "90m"}
+        interval_map = {"Diário": "15m", "Semanal": "15m", "Mensal": "15m"}
 
         period = period_map.get(time)
         interval = interval_map.get(time)
@@ -34,10 +33,10 @@ class TickersData:
         latest_data = df_history.iloc[-1]
         general_data = Settings(
             symbol=self.ticker_symbol,
-            open=round(Decimal(latest_data["Open"]), 2),
-            higher=round(Decimal(latest_data["High"]), 2),
-            lower=round(Decimal(latest_data["Low"]), 2),
-            closed=round(Decimal(latest_data["Close"]), 2),
+            open=round(float(latest_data["Open"]), 2),
+            higher=round(float(latest_data["High"]), 2),
+            lower=round(float(latest_data["Low"]), 2),
+            closed=round(float(latest_data["Close"]), 2),
             volume=latest_data["Volume"],
         )
 
@@ -56,6 +55,7 @@ class TickersData:
             ["Datetime", "Open", "High", "Low", "Close", "Volume"]
         ]
         return max_min_plot(
+            dataframe["Datetime"],
             dataframe["Low"],
             dataframe["High"],
             dataframe["Open"].mean(),
@@ -69,4 +69,4 @@ class TickersData:
         dataframe = dataframe.reset_index()[
             ["Datetime", "Open", "High", "Low", "Close", "Volume"]
         ]
-        return candle_plot(dataframe, self.ticker_symbol, currency)
+        return candle_plot(dataframe, self.ticker_symbol, currency, time)
