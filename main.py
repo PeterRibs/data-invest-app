@@ -20,7 +20,7 @@ currency_list = ["USD", "BRL"]
 
 currency = st.sidebar.selectbox("Moeda:", currency_list)
 
-col01, col02, col03, col05 = st.columns(4)
+col00, col01, col02, col03, col05 = st.columns(5)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
@@ -43,14 +43,21 @@ ticker_data_open_mean = round(
 ticker_data_close_mean = round(
     ticker_data.get_general_data(time, currency)[1]["Close"].mean(), 2
 )
-
-col01.write(f"""Abertura: {ticker_general_data.open} {currency}""")
+col00.title(
+    f"""{selected_ticker}
+        {currency} - {time}"""
+)
+# col00.write(
+#     f"Abertura: <span style='font-size:20px'>{selected_ticker} - {currency} - {time}</span>",
+#     unsafe_allow_html=True,
+# )
+col01.write(f"""Abertura: {ticker_general_data.open}""")
 col01.metric(
     label="Fechamento:",
     value=float(ticker_general_data.closed),
     delta=round(float(ticker_general_data.closed) - float(ticker_general_data.open), 2),
 )
-col02.write(f"""Máximo: {ticker_general_data.higher} {currency}""")
+col02.write(f"""Máximo: {ticker_general_data.higher}""")
 col02.metric(
     label="Mínimo:",
     value=float(ticker_general_data.lower),
@@ -58,7 +65,7 @@ col02.metric(
         float(ticker_general_data.lower) - float(ticker_general_data.higher), 2
     ),
 )
-col03.write(f"""Média de abertura: {ticker_data_open_mean} {currency}""")
+col03.write(f"""Média de abertura: {ticker_data_open_mean}""")
 col03.metric(
     label="Média de fechamento:",
     value=float(ticker_data_close_mean),
@@ -66,8 +73,8 @@ col03.metric(
 )
 col05.write(f"""Número de negociações: {ticker_general_data.volume}""")
 
-charts, tables, compare, observations = st.tabs(
-    ["Gráficos", "Tabela", "Comparativo", "Observações"]
+charts, tables, compare, notes = st.tabs(
+    ["Gráficos", "Tabela", "Comparativo", "Anotações"]
 )
 
 with charts:
@@ -75,14 +82,13 @@ with charts:
     col16.plotly_chart(ticker_data.plot_candle(time, currency))
     col17.plotly_chart(ticker_data.plot_max_min(time, currency))
 
-    comment = st.text_area("Adicione um comentário:", key="comment_individual")
+    note = st.text_area("Adicione uma anotação:", key="note_individual")
     if st.button("Salvar", key="save_individual"):
-        database.insert_comment(time, "individual", selected_ticker, comment)
+        database.insert_note(time, "individual", selected_ticker, note)
         st.success("Salvo com sucesso!")
-        comment = ""
+        note = ""
 
 with tables:
-    st.title(f"Tabela - {selected_ticker}")
     st.write(ticker_dataframe)
 
 with compare:
@@ -96,20 +102,19 @@ with compare:
     col16.plotly_chart(ticker_data.plot_max_min(time, currency))
     col17.plotly_chart(ticker_data_second.plot_max_min(time, currency))
 
-    comment = st.text_area("Adicione um comentário:", key="comment_compare")
+    note = st.text_area("Adicione um anotação:", key="note_compare")
     if st.button("Salvar", key="save_compare"):
-        database.insert_comment(
+        database.insert_note(
             time,
             "comparação",
             f"{selected_ticker} - {selected_ticker_second}",
-            comment,
+            note,
         )
         st.success("Salvo com sucesso!")
-        comment = ""
+        note = ""
 
-with observations:
-    st.title("Observações")
-    ticker_comments = database.get_comments_as_dataframe(selected_ticker)
-    ticker_comments = ticker_comments.drop("id", axis=1)
-    ticker_comments.columns = ["Data", "Período", "Área", "Ação", "Comentário"]
-    st.write(ticker_comments)
+with notes:
+    ticker_notes = database.get_notes_as_dataframe(selected_ticker)
+    ticker_notes = ticker_notes.drop("id", axis=1)
+    ticker_notes.columns = ["Data", "Período", "Área", "Ação", "Anotação"]
+    st.write(ticker_notes)

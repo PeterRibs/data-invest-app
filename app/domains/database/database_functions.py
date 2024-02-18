@@ -18,29 +18,29 @@ class Database:
     def create_table(self):
         self.conn = self.connection_database()
         try:
-            sql = """CREATE TABLE IF NOT EXISTS tricker_comments (
+            sql = """CREATE TABLE IF NOT EXISTS tricker_notes (
                         id INTEGER PRIMARY KEY,
                         date_time DATETIME DEFAULT CURRENT_TIMESTAMP,
                         period TEXT NOT NULL,
-                        area_commented TEXT NOT NULL,
+                        area_noted TEXT NOT NULL,
                         tricker_symbol TEXT NOT NULL,
-                        comment TEXT NOT NULL
+                        note TEXT NOT NULL
                     )"""
             self.conn.execute(sql)
         except sqlite3.Error as e:
             print(e)
 
-    def insert_comment(self, period, area_commented, tricker_symbol, comment):
-        sql = """INSERT INTO tricker_comments(date_time, period, area_commented, tricker_symbol, comment) 
+    def insert_note(self, period, area_noted, tricker_symbol, comment):
+        sql = """INSERT INTO tricker_notes(date_time, period, area_noted, tricker_symbol, note) 
                  VALUES(CURRENT_TIMESTAMP, ?, ?, ?, ?)"""
         cur = self.conn.cursor()
-        cur.execute(sql, (period, area_commented, tricker_symbol, comment))
+        cur.execute(sql, (period, area_noted, tricker_symbol, comment))
         self.conn.commit()
 
-    def get_comments_as_dataframe(self, tricker_symbol):
+    def get_notes_as_dataframe(self, tricker_symbol):
         cur = self.conn.cursor()
         cur.execute(
-            "SELECT * FROM tricker_comments WHERE tricker_symbol LIKE ?",
+            "SELECT * FROM tricker_notes WHERE tricker_symbol LIKE ?",
             ("%" + tricker_symbol + "%",),
         )
         rows = cur.fetchall()
