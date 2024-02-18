@@ -46,6 +46,7 @@ class TickersData:
         self._convert_to_currency(df_history, currency)
 
         latest_data = df_history.iloc[-1]
+        penultimate_data_volume = df_history["Volume"][-2]
         general_data = Settings(
             symbol=self.ticker_symbol,
             open=round(float(latest_data["Open"]), 2),
@@ -53,6 +54,7 @@ class TickersData:
             lower=round(float(latest_data["Low"]), 2),
             closed=round(float(latest_data["Close"]), 2),
             volume=latest_data["Volume"],
+            penultimate_data_volume=penultimate_data_volume,
         )
 
         return general_data, df_history
