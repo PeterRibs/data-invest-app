@@ -5,13 +5,14 @@ def candle_plot(
     df,
     ticker_symbol,
     currency,
+    time,
     height_size=400,
     width_size=550,
 ):
     candle = go.Figure(
         data=[
             go.Candlestick(
-                x=df["Datetime"],
+                x=df["Datetime"] if time == "Diário" else None,
                 open=df["Open"],
                 high=df["High"],
                 low=df["Low"],
