@@ -6,21 +6,18 @@ from app.domains.database.database_functions import Database
 database = Database("datainvest_database.db")
 database.create_table()
 
-st.set_page_config(layout="wide")
-
-st.sidebar.image("app/assets/datainvest.png")
-
-selected_ticker = st.sidebar.selectbox("Ação:", sorted(ticker_list))
-
 time_list = ["Diário", "Semanal", "Mensal"]
-
-time = st.sidebar.selectbox("Período analisado:", time_list)
-
 currency_list = ["USD", "BRL"]
 
+# Sidebar
+st.set_page_config(layout="wide")
+st.sidebar.image("app/assets/datainvest.png")
+selected_ticker = st.sidebar.selectbox("Ação:", sorted(ticker_list))
+time = st.sidebar.selectbox("Período analisado:", time_list)
 currency = st.sidebar.selectbox("Moeda:", currency_list)
 
-col00, col01, col02, col03, col05 = st.columns(5)
+# Header
+col00, col01, col02, col03, col04 = st.columns(5)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
@@ -45,12 +42,8 @@ ticker_data_close_mean = round(
 )
 col00.title(
     f"""{selected_ticker}
-        {currency} - {time}"""
+{currency} - {time}"""
 )
-# col00.write(
-#     f"Abertura: <span style='font-size:20px'>{selected_ticker} - {currency} - {time}</span>",
-#     unsafe_allow_html=True,
-# )
 col01.write(f"""Abertura: {ticker_general_data.open}""")
 col01.metric(
     label="Fechamento:",
@@ -71,16 +64,17 @@ col03.metric(
     value=float(ticker_data_close_mean),
     delta=round(float(ticker_data_close_mean) - float(ticker_data_open_mean), 2),
 )
-col05.write(f"""Número de negociações: {ticker_general_data.volume}""")
+col04.write(f"""Número de negociações: {ticker_general_data.volume}""")
 
-charts, tables, compare, notes = st.tabs(
-    ["Gráficos", "Tabela", "Comparativo", "Anotações"]
+# Tabs
+charts, tables, notes, compare = st.tabs(
+    ["Gráficos", "Tabela", "Anotações", "Comparativo"]
 )
 
 with charts:
-    col16, col17 = st.columns(2)
-    col16.plotly_chart(ticker_data.plot_candle(time, currency))
-    col17.plotly_chart(ticker_data.plot_max_min(time, currency))
+    col10, col11 = st.columns(2)
+    col10.plotly_chart(ticker_data.plot_candle(time, currency))
+    col11.plotly_chart(ticker_data.plot_max_min(time, currency))
 
     note = st.text_area("Adicione uma anotação:", key="note_individual")
     if st.button("Salvar", key="save_individual"):
@@ -91,16 +85,24 @@ with charts:
 with tables:
     st.write(ticker_dataframe)
 
+with notes:
+    ticker_notes = database.get_notes_as_dataframe(selected_ticker)
+    ticker_notes = ticker_notes.drop("id", axis=1)
+    ticker_notes.columns = ["Data", "Período", "Área", "Ação", "Anotação"]
+    st.write(ticker_notes)
+
 with compare:
-    selected_ticker_second = st.selectbox("Segunda Ação:", ticker_list)
+    col10, col11, col12, col13, col14 = st.columns(5)
+    col20, col21 = st.columns(2)
+    col30, col31 = st.columns(2)
+
+    selected_ticker_second = col13.selectbox("Segunda Ação:", ticker_list)
     ticker_data_second = TickersData(ticker_symbol=selected_ticker_second)
 
-    col16, col17 = st.columns(2)
-    col26, col27 = st.columns(2)
-    col16.plotly_chart(ticker_data.plot_candle(time, currency))
-    col17.plotly_chart(ticker_data_second.plot_candle(time, currency))
-    col16.plotly_chart(ticker_data.plot_max_min(time, currency))
-    col17.plotly_chart(ticker_data_second.plot_max_min(time, currency))
+    col20.plotly_chart(ticker_data.plot_candle(time, currency))
+    col21.plotly_chart(ticker_data_second.plot_candle(time, currency))
+    col30.plotly_chart(ticker_data.plot_max_min(time, currency))
+    col31.plotly_chart(ticker_data_second.plot_max_min(time, currency))
 
     note = st.text_area("Adicione um anotação:", key="note_compare")
     if st.button("Salvar", key="save_compare"):
@@ -112,9 +114,3 @@ with compare:
         )
         st.success("Salvo com sucesso!")
         note = ""
-
-with notes:
-    ticker_notes = database.get_notes_as_dataframe(selected_ticker)
-    ticker_notes = ticker_notes.drop("id", axis=1)
-    ticker_notes.columns = ["Data", "Período", "Área", "Ação", "Anotação"]
-    st.write(ticker_notes)
