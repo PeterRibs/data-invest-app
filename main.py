@@ -17,7 +17,7 @@ time = st.sidebar.selectbox("Período analisado:", time_list)
 currency = st.sidebar.selectbox("Moeda:", currency_list)
 
 # Header
-col00, col01, col02, col03, col04 = st.columns(5)
+col00, col01, col02, col03, col04, col05 = st.columns(6)
 
 ticker_data = TickersData(ticker_symbol=selected_ticker)
 ticker_dataframe = ticker_data.get_download(time, currency)
@@ -31,31 +31,33 @@ ticker_dataframe.columns = [
     "Qtd trades",
 ]
 
+tricker_get_general_data = ticker_data.get_general_data(time, currency)
+ticker_data_open_mean = round(tricker_get_general_data[1]["Open"].mean(), 2)
+ticker_data_close_mean = round(tricker_get_general_data[1]["Close"].mean(), 2)
+ticker_data_dividend = ticker_data.get_dividends_data(currency)
 
-ticker_general_data = ticker_data.get_general_data(time, currency)[0]
-
-ticker_data_open_mean = round(
-    ticker_data.get_general_data(time, currency)[1]["Open"].mean(), 2
-)
-ticker_data_close_mean = round(
-    ticker_data.get_general_data(time, currency)[1]["Close"].mean(), 2
-)
 col00.title(
     f"""{selected_ticker}
 {currency} - {time}"""
 )
-col01.write(f"""Abertura: {ticker_general_data.open}""")
+col01.write(f"""Abertura: {tricker_get_general_data[0].open}""")
 col01.metric(
     label="Fechamento:",
-    value=float(ticker_general_data.closed),
-    delta=round(float(ticker_general_data.closed) - float(ticker_general_data.open), 2),
+    value=float(tricker_get_general_data[0].closed),
+    delta=round(
+        float(tricker_get_general_data[0].closed)
+        - float(tricker_get_general_data[0].open),
+        2,
+    ),
 )
-col02.write(f"""Máximo: {ticker_general_data.higher}""")
+col02.write(f"""Máximo: {tricker_get_general_data[0].higher}""")
 col02.metric(
     label="Mínimo:",
-    value=float(ticker_general_data.lower),
+    value=float(tricker_get_general_data[0].lower),
     delta=round(
-        float(ticker_general_data.lower) - float(ticker_general_data.higher), 2
+        float(tricker_get_general_data[0].lower)
+        - float(tricker_get_general_data[0].higher),
+        2,
     ),
 )
 col03.write(f"""Média de abertura: {ticker_data_open_mean}""")
@@ -64,7 +66,19 @@ col03.metric(
     value=float(ticker_data_close_mean),
     delta=round(float(ticker_data_close_mean) - float(ticker_data_open_mean), 2),
 )
-col04.write(f"""Número de negociações: {ticker_general_data.volume}""")
+
+col04.write(f"""Dividendo anterior: {round(float(ticker_data_dividend[0][-2]),2)}""")
+col04.metric(
+    label="Dividendo:",
+    value=round(float(ticker_data_dividend[0][-1]), 2),
+    delta=round(
+        float(ticker_data_dividend[0][-1]) - float(ticker_data_dividend[0][-2]),
+        2,
+    ),
+)
+
+col05.write(f"""Número de negociações: {tricker_get_general_data[0].volume}""")
+
 
 # Tabs
 charts, tables, notes, compare = st.tabs(
@@ -95,6 +109,7 @@ with compare:
     col10, col11, col12, col13, col14 = st.columns(5)
     col20, col21 = st.columns(2)
     col30, col31 = st.columns(2)
+    col40, col41 = st.columns(2)
 
     selected_ticker_second = col13.selectbox("Segunda Ação:", ticker_list)
     ticker_data_second = TickersData(ticker_symbol=selected_ticker_second)
@@ -103,8 +118,10 @@ with compare:
     col21.plotly_chart(ticker_data_second.plot_candle(time, currency))
     col30.plotly_chart(ticker_data.plot_max_min(time, currency))
     col31.plotly_chart(ticker_data_second.plot_max_min(time, currency))
+    col40.plotly_chart(ticker_data.plot_dividends(currency))
+    col41.plotly_chart(ticker_data_second.plot_dividends(currency))
 
-    note = st.text_area("Adicione um anotação:", key="note_compare")
+    note = st.text_area("Adicione uma anotação:", key="note_compare")
     if st.button("Salvar", key="save_compare"):
         database.insert_note(
             time,
