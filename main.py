@@ -55,12 +55,15 @@ col13.metric(
     value=float(ticker_data_close_mean),
     delta=round(float(ticker_data_close_mean) - float(ticker_data_open_mean), 2),
 )
-col14.write(f"""Dividendo anterior: {round(float(ticker_data_dividend[0][-2]),2)}""")
+col14.write(
+    f"""Dividendo anterior: {round(float(ticker_data_dividend[0].iloc[-2]),2)}"""
+)
 col14.metric(
     label="Dividendo:",
-    value=round(float(ticker_data_dividend[0][-1]), 2),
+    value=round(float(ticker_data_dividend[0].iloc[-1]), 2),
     delta=round(
-        float(ticker_data_dividend[0][-1]) - float(ticker_data_dividend[0][-2]),
+        float(ticker_data_dividend[0].iloc[-1])
+        - float(ticker_data_dividend[0].iloc[-2]),
         2,
     ),
 )
