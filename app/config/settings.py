@@ -8,3 +8,4 @@ class Settings(BaseSettings):
     lower: float
     closed: float
     volume: int
+    penultimate_data_volume: int
