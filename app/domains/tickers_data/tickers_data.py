@@ -25,7 +25,7 @@ class TickersData:
 
     def get_dividends_data(self, currency):
         ticker = self._get_ticker()
-        df_dividends = ticker.dividends.values
+        df_dividends = ticker.dividends.sort_index(ascending=True).values
 
         if currency == "BRL":
             df_dividends = df_dividends * dolar
