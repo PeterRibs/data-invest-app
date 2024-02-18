@@ -1,9 +1,9 @@
 import yfinance as yf
-import pandas as pd
-from datetime import datetime, timezone
+
 from app.config.settings import Settings
 from app.domains.graphs.max_min_plot import max_min_plot
 from app.domains.graphs.candle_plot import candle_plot
+from app.domains.graphs.dividend_plot import dividend_plot
 
 dolar = 4.97
 
@@ -12,13 +12,28 @@ class TickersData:
     def __init__(self, ticker_symbol):
         self.ticker_symbol = ticker_symbol
 
+    def _get_ticker(self):
+        return yf.Ticker(self.ticker_symbol)
+
     def _fetch_history(self, period, interval):
-        ticker = yf.Ticker(self.ticker_symbol)
+        ticker = self._get_ticker()
         return ticker.history(period=period, interval=interval)
 
     def _convert_to_currency(self, dataframe, currency):
         if currency == "BRL":
             dataframe[["Open", "High", "Low", "Close"]] *= dolar
+
+    def get_dividends_data(self, currency):
+        ticker = self._get_ticker()
+        df_dividends = ticker.dividends.values
+
+        if currency == "BRL":
+            df_dividends = df_dividends * dolar
+
+        if len(df_dividends) == 0:
+            df_dividends = [0.0] * 10
+
+        return df_dividends[-2:], df_dividends[-10:]
 
     def get_general_data(self, time, currency):
         period_map = {"Diário": "1d", "Semanal": "5d", "Mensal": "30d"}
@@ -70,3 +85,13 @@ class TickersData:
             ["Datetime", "Open", "High", "Low", "Close", "Volume"]
         ]
         return candle_plot(dataframe, self.ticker_symbol, currency, time)
+
+    def plot_dividends(self, currency):
+        _, dataframe = self.get_dividends_data(currency)
+        return dividend_plot(
+            dataframe,
+            self.ticker_symbol,
+            currency,
+            height_size=400,
+            width_size=560,
+        )

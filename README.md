@@ -1,14 +1,14 @@
 # DataInvest app
 
-## Painel Interativo de Dados do Mercado de Ações
+## Painel Interativo de Dados do Mercado de Ações:
 Bem-vindo ao projeto de Painel Interativo de Dados do Mercado de Ações! Este projeto utiliza Python e o framework Streamlit para criar uma experiência interativa que permite explorar e analisar dados do mercado de ações em tempo real.
 
-## Funcionalidades
+## Funcionalidades:
 Coleta de Dados: Utilizamos a biblioteca yfinance para obter informações em tempo real sobre as ações.
 Visualização Interativa: Os dados são apresentados em gráficos interativos para uma análise mais eficaz.
 Detalhes pontuais: Além dos gráficos, são apresentadas informações detalhadas sobre os ativos selecionados.
 
-## Como Utilizar
+## Como Utilizar:
 Para iniciar o painel, siga estas etapas simples:
 
 1) Certifique-se de ter o Python instalado em seu ambiente.
@@ -27,7 +27,7 @@ Isso abrirá automaticamente o painel em seu navegador padrão.
 - Python
 - SQLite
   
-## Pacotes Python utilizados
+## Pacotes Python utilizados:
 - Pandas
 - Plotly
 - Pydantic
@@ -35,5 +35,8 @@ Isso abrirá automaticamente o painel em seu navegador padrão.
 - Streamlit
 - Yfinance
 
-## Agradecimentos
-Obrigado por utilizar nosso Painel Interativo de Dados do Mercado de Ações! Esperamos que seja útil em suas análises financeiras.
+## Links:
+Existem dois modelos de app que se diferenciam apenas pelo layout do local de escolha dos parâmetros:
+- Modelo 1: https://data-invest-app.streamlit.app/
+- Modelo 2: https://data-invest-app-2.streamlit.app/
+
