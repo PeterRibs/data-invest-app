@@ -1,5 +1,5 @@
 import yfinance as yf
-from pandas import Series
+from pandas import Series, to_datetime
 from currency_converter import CurrencyConverter
 
 from app.config.settings import Settings
@@ -31,6 +31,7 @@ class TickersData:
     def get_dividends_data(self, currency):
         ticker = self._get_ticker()
         df_dividends = ticker.dividends.sort_index(ascending=True)
+        df_dividends.index = to_datetime(df_dividends.index).date
 
         if currency == "BRL":
             df_dividends = df_dividends * dolar
