@@ -1,12 +1,15 @@
 import yfinance as yf
 from pandas import Series
+from currency_converter import CurrencyConverter
 
 from app.config.settings import Settings
 from app.domains.graphs.max_min_plot import max_min_plot
 from app.domains.graphs.candle_plot import candle_plot
 from app.domains.graphs.dividend_plot import dividend_plot
 
-dolar = 4.97
+convert = CurrencyConverter()
+
+dolar = convert.convert(1, "USD", "BRL")
 
 
 class TickersData:
