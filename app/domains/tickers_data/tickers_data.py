@@ -38,9 +38,6 @@ class TickersData:
         if len(df_dividends) == 0:
             df_dividends = Series([0.0] * 10)
 
-        print(df_dividends)
-        print(df_dividends[-10:])
-
         return df_dividends[-2:], df_dividends[-10:]
 
     def get_general_data(self, time, currency):
