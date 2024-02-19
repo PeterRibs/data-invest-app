@@ -3,3 +3,4 @@ plotly
 streamlit
 yfinance==0.2.36
 pydantic_settings
+currency_converter 
