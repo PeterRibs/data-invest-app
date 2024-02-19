@@ -28,6 +28,7 @@ Isso abrirá automaticamente o painel em seu navegador padrão.
 - SQLite
   
 ## Pacotes Python utilizados:
+- CurrencyConverter
 - Pandas
 - Plotly
 - Pydantic
